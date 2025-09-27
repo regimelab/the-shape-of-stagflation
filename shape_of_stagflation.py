@@ -9,7 +9,7 @@ import os
 import joblib
 from sklearn.mixture import BayesianGaussianMixture
 
-API_KEY = "8BTpXU_XSAuvUkuduXTb2ofMl1l_L_yf"
+API_KEY = ""
 TICKERS = ["SPY", "USO", "GLD", "TLT"]
 
 
