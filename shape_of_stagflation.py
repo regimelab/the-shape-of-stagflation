@@ -5,13 +5,9 @@ from polygon import RESTClient
 from sklearn.decomposition import PCA
 from scipy.stats import zscore
 import seaborn as sns
-import os
-import joblib
-from sklearn.mixture import BayesianGaussianMixture
 
-API_KEY = ""
+API_KEY = "A4H8PmMDYaaq649waj4QzcnxpfPvtufJ"
 TICKERS = ["SPY", "USO", "GLD", "TLT"]
-
 
 def eigenports(rets, num_components=3):
   '''
@@ -28,7 +24,7 @@ def eigenports(rets, num_components=3):
   pca = PCA(n_components=num_components)  
   components = pca.fit_transform(rets[cols].cov())
 
-  for M in range(num_components):
+  for M in range(0, num_components):
     eigenvec = pd.Series(index=range(feat_num), data=pca.components_[M])
     eigenvecs.append(eigenvec)
 
@@ -36,17 +32,17 @@ def eigenports(rets, num_components=3):
 
 def fetch_hourly_returns(ticker, lookback_days=18):
     client = RESTClient(API_KEY)
-    from_date = str((np.datetime64('today') - np.timedelta64(lookback_days, 'D')))
+    from_date = str((np.datetime64('2025-09-08') - np.timedelta64(lookback_days, 'D')))
     bars = client.list_aggs(
         ticker=ticker,
         multiplier=1,
         timespan="hour",
         from_=from_date,
-        to=str(np.datetime64('today')),
+        to=str(np.datetime64('2025-09-08')),
         limit=9999
     )
     closes = np.array([bar.close for bar in bars])
-    returns = np.sort(np.diff(np.log(closes)))
+    returns = np.diff(np.log(closes))
     return returns
 
 # Fetch returns for all tickers and align lengths
@@ -101,12 +97,12 @@ returns_array = returns_matrix.values if hasattr(returns_matrix, "values") else 
 portfolio_growth = returns_array @ eigenvectors_long_only.T
 plt.figure(figsize=(12, 6))
 for i in range(min(3, portfolio_growth.shape[1])):
-    cum_returns = np.cumsum(portfolio_growth[:, i])
+    cum_returns = np.cumsum(np.sort(portfolio_growth[:, i]))
     plt.plot(cum_returns, colors[i % len(colors)],
              label=f"Eigenportfolio {i+1}")
 
 plt.title("Cumulative Returns of Long-Only Normalized Eigenportfolio-weighted Portfolios")
-plt.xlabel("Time (Hourly steps)")
+plt.xlabel("Sorted by Magnitude")
 plt.ylabel("Cumulative Return")
 plt.legend()
 plt.grid(True)
