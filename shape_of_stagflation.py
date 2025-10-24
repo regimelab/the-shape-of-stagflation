@@ -6,7 +6,7 @@ from sklearn.decomposition import PCA
 from scipy.stats import zscore
 import seaborn as sns
 
-API_KEY = "A4H8PmMDYaaq649waj4QzcnxpfPvtufJ"
+API_KEY = ""
 TICKERS = ["SPY", "USO", "GLD", "TLT"]
 
 def eigenports(rets, num_components=3):
